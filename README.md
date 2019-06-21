@@ -1,6 +1,7 @@
 # libheif
 
-[![Build Status](https://travis-ci.org/strukturag/libheif.svg?branch=master)](https://travis-ci.org/strukturag/libheif) [![Build Status](https://ci.appveyor.com/api/projects/status/github/strukturag/libheif?svg=true)](https://ci.appveyor.com/project/strukturag/libheif)
+[![Build Status](https://travis-ci.org/strukturag/libheif.svg?branch=master)](https://travis-ci.org/strukturag/libheif) [![Build Status](https://ci.appveyor.com/api/projects/status/github/strukturag/libheif?svg=true)](https://ci.appveyor.com/project/strukturag/libheif) [![Coverity Scan Build Status](https://scan.coverity.com/projects/16641/badge.svg)](https://scan.coverity.com/projects/strukturag-libheif)
+
 
 libheif is an ISO/IEC 23008-12:2017 HEIF file format decoder and encoder.
 
@@ -9,7 +10,7 @@ best compression ratios currently possible.
 
 libheif makes use of [libde265](https://github.com/strukturag/libde265) for
 the actual image decoding and x265 for encoding. Alternative codecs for, e.g., AVC and JPEG can be
-provided as plugins.
+provided as plugins. There is experimental code for an AV1 plugin (for AVIF format support) in the 'avif' branch.
 
 
 ## Supported features
@@ -18,24 +19,32 @@ libheif has support for decoding
 * tiled images
 * alpha channels
 * thumbnails
-* reading EXIF data
+* reading EXIF and XMP metadata
 * reading the depth channel
-* multiple images in a HEIF file
+* multiple images in an HEIF file
 * image transformations (crop, mirror, rotate)
 * overlay images
-* plugin interface to add decoders for additional formats (AVC, JPEG)
+* plugin interface to add decoders for additional formats (AV1, AVC, JPEG)
+* decoding of files while downloading (e.g. extract image size before file has been completely downloaded)
+* reading color profiles
+* 10 and 12 bit images
 
 The encoder supports:
 * lossy compression with adjustable quality
 * lossless compression
 * alpha channels
+* thumbnails
+* save multiple images to an HEIF file
+* save EXIF and XMP metadata
+* writing color profiles
+* 10 and 12 bit images
 
 ## API
 
 The library has a C API for easy integration and wide language support.
 Note that the API is still work in progress and may still change.
 
-Loading the primary image in a HEIF file is as easy as this:
+Loading the primary image in an HEIF file is as easy as this:
 
 ```C
 heif_context* ctx = heif_context_alloc();
@@ -57,7 +66,6 @@ Writing an HEIF file can be done like this:
 
 ```C
 heif_context* ctx = heif_context_alloc();
-heif_context_new_heic(ctx);
 
 // get the default encoder
 heif_encoder* encoder;
@@ -76,6 +84,12 @@ heif_context_write_to_file(context, "output.heic");
 ```
 
 See the header file `heif.h` for the complete C API.
+
+There is also a C++ API which is a header-only wrapper to the C API.
+Hence, you can use the C++ API and still be binary compatible.
+Code using the C++ API is much less verbose than using the C API directly.
+
+There is also an experimental Go API, but this is not stable yet.
 
 
 ## Compiling
@@ -105,7 +119,7 @@ This is `libheif` running in JavaScript in your browser.
 
 ## Example programs
 
-Two example programs are provided in the `examples` directory.
+Some example programs are provided in the `examples` directory.
 The program `heif-convert` converts all images stored in an HEIF file to JPEG or PNG.
 `heif-enc` lets you convert JPEG files to HEIF.
 The program `heif-info` is a simple, minimal decoder that dumps the file structure to the console.
@@ -113,11 +127,19 @@ The program `heif-info` is a simple, minimal decoder that dumps the file structu
 There is also a GIMP plugin using libheif [here](https://github.com/strukturag/heif-gimp-plugin).
 
 
+## HEIF thumbnails for the Gnome desktop
+
+The program `heif-thumbnailer` can be used as a HEIF thumbnailer for the Gnome desktop.
+The matching Gnome configuration files are in the `gnome` directory.
+Place the file `heif.xml` into `/usr/share/mime/packages` and `heif.thumbnailer` into `/usr/share/thumbnailers`.
+You may have to run `update-mime-database /usr/share/mime` to update the list of known MIME types.
+
+
 ## License
 
 The libheif is distributed under the terms of the GNU Lesser General Public License.
-The sample applications are distributed under the terms of the GNU General Public License.
+The sample applications are distributed under the terms of the MIT License.
 
 See COPYING for more details.
 
-Copyright (c) 2017-2018 Struktur AG Contact: Dirk Farin farin@struktur.de
+Copyright (c) 2017-2019 Struktur AG Contact: Dirk Farin farin@struktur.de

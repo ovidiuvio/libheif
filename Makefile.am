@@ -1,9 +1,13 @@
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
-    src \
+    libheif \
     examples \
     extra \
+    fuzzing \
+    gdk-pixbuf \
+    gnome \
+    go \
     scripts
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -14,10 +18,8 @@ EXTRA_DIST = \
     appveyor.yml \
     autogen.sh \
     CMakeLists.txt \
-    */CMakeLists.txt \
     CPPLINT.cfg \
     README.md \
     pre.js \
     post.js \
-    build-emscripten.sh \
-    */COPYING
+    build-emscripten.sh
